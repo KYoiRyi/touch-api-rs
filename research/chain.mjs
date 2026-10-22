@@ -1,0 +1,22 @@
+import { newPage, sleep } from './lib.mjs'
+import fs from 'node:fs'
+const c = await newPage('about:blank')
+await c.init()
+await c.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
+const shots = '/var/lib/dsh/Touchgal/shots'
+await c.goto('https://www.touchgal.ink/a555829b?tab=resources', 12000)
+await sleep(4000)
+await c.shot(shots + '/chain1-resource-tab.png')
+const clicked = await c.eval("(()=>{const btns=[...document.querySelectorAll('button')].filter(b=>(b.getAttribute('aria-label')||'').includes('下载')); if(!btns.length) return 'none'; btns[0].click(); return btns.length})()")
+console.log('download buttons:', clicked)
+await sleep(2500)
+await c.shot(shots + '/chain2-links-expanded.png')
+const links = await c.eval("JSON.stringify([...document.querySelectorAll('a')].map(a=>a.getAttribute('href')).filter(h=>h&&(h.includes('pan.touchgal.net')||h.includes('/redirect'))).slice(0,10))")
+console.log('LINKS', links)
+const clk = await c.eval("(()=>{const a=[...document.querySelectorAll('a')].find(x=>(x.getAttribute('href')||'').includes('pan.touchgal.net')); if(!a) return 'nf'; a.click(); return 'clicked'})()")
+console.log('CLICK', clk)
+await sleep(4000)
+console.log('URL after click:', await c.eval('location.href'))
+await c.shot(shots + '/chain3-redirect.png')
+console.log('REDIRECT TEXT:', (await c.bodyText()).slice(0,400))
+c.close(); process.exit(0)

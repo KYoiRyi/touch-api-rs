@@ -1,0 +1,26 @@
+[package]
+name = "touchgal-api"
+description = "HTTP API server exposing the touchgal-core download chain to other applications"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "touchgal-api"
+path = "src/main.rs"
+
+[[bin]]
+name = "touchgal"
+path = "src/bin/touchgal.rs"
+
+[dependencies]
+touchgal-core = { path = "../touchgal-core" }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+axum = { workspace = true }
+clap = { workspace = true }
